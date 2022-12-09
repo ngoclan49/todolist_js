@@ -1,97 +1,37 @@
-var taskList = new TaskList();
-var validation = new Validation();
+var tasks = [];
 
-getLocalStorage();
-/**
- * Add Task
- */
-getEle("addItem").addEventListener("click", function () {
-  var newTask = getEle("newTask").value;
+addItem.addEventListener('click', function(e){
+    e.preventDefault();
+    var newTask = document.getElementById('newTask').value;
+    var notiInput = document.getElementById('notiInput');
+    var addItem = document.getElementById('addItem');
+    var toDo = document.getElementById('todo');
+    var complete = document.getElementById('completed');
+    var card = document.getElementsByClassName('card__todo')
+    var arr = {};
+        arr.name = newTask,
+        arr.status = toDo
+    tasks.push(arr);
+    console.log(tasks);
+    newTask = ''
+})
 
-  var isValid = true;
-  isValid &= validation.checkEmty(
-    newTask,
-    "notiInput",
-    "(*) Vui lòng nhập thông tin"
-  );
-
-  if (!isValid) return;
-
-  var id = Math.random();
-  var task = new Task(id, newTask, "todo");
-  taskList.addTask(task);
-  createTable(taskList.arr);
-  setLocalStorage();
-});
-
-/**
- * Delete Task
- */
-function deleteTask(id) {
-  taskList.deleteTask(id);
-  createTable(taskList.arr);
-  setLocalStorage();
-}
-
-/**
- * Change Status
- */
-function changeStatus(id) {
-  var task = taskList.getTaskById(id);
-  task.status = task.status === "todo" ? "completed" : "todo";
-  taskList.updateTask(task);
-  createTable(taskList.arr);
-  setLocalStorage();
-}
-
-function createTable(arr) {
-  var contentTodo = "";
-  var contentCompleted = "";
-  getEle("todo").innerHTML = "";
-  getEle("completed").innerHTML = "";
-  arr.forEach(function (item, index) {
-    if (item.status === "todo") {
-      contentTodo += renderListLiHtml(item);
-      getEle("todo").innerHTML = contentTodo;
-    } else if (item.status === "completed") {
-      contentCompleted += renderListLiHtml(item);
-      getEle("completed").innerHTML = contentCompleted;
+function loadTask() {
+    var str = `
+                <tr>
+                    <ul></ul>
+                    <ul></ul>
+                </tr>
+              `;
+    for (i = 0; i < tasks.length; i ++) {
+        str += `
+        <tr>
+            <ul>${toDo}</ul>
+            <ul>${complete}</ul>
+        </tr>
+      `
     }
-  });
 }
 
-function renderListLiHtml(item) {
-  return `<li>
-      <span>${item.taskName}</span>
-      <div class="buttons">
-        <button
-          class="remove"
-          onclick="deleteTask(${item.id})"
-        >
-          <i class="fa fa-trash-alt"></i>
-        </button>
-        <button
-          class="complete"
-          onclick="changeStatus(${item.id})"
-        >
-          <i class="far fa-check-circle"></i>
-          <i class="fas fa-check-circle"></i>
-        </button>
-      </div>
-    </li>`;
-}
 
-function setLocalStorage() {
-  localStorage.setItem("TaskList", JSON.stringify(taskList.arr));
-}
 
-function getLocalStorage() {
-  if (localStorage.getItem("TaskList")) {
-    taskList.arr = JSON.parse(localStorage.getItem("TaskList"));
-    createTable(taskList.arr);
-  }
-}
-
-function getEle(id) {
-  return document.getElementById(id);
-}

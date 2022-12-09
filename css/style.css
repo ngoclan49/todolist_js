@@ -319,4 +319,6 @@ ul.todo#completed span {
 
 .alert-danger {
   color: red;
+  font-size: 14px;
+  font-weight: bold;
 }
